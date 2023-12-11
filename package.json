@@ -1,5 +1,5 @@
 {
-  "name": "@gzuidhof/go-npm",
+  "name": "@ershisan99/go-npm",
   "version": "0.1.13",
   "description": "Distribute and install Go binaries via NPM",
   "main": "index.js",
@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gzuidhof/go-npm.git"
+    "url": "https://github.com/ershisan99/go-npm.git"
   },
   "homepage": "https://github.com/gzuidhof/go-npm",
   "devDependencies": {
@@ -23,7 +23,7 @@
     "jest": "^24.5.0",
     "mkdirp": "^1.0.4",
     "request": "^2.88.2",
-    "tar": "^2.2.2",
+    "tar": "^6.2.0",
     "unzipper": "0.10.10"
   }
 }

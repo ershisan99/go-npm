@@ -2,21 +2,41 @@ const tar = require('tar');
 const zlib = require('zlib');
 
 /**
- * Unzip strategy for resources using `.tar.gz`.
+ * Unzip and untar a `.tar.gz` file.
  *
- * First we will Un-GZip, then we will untar. So once untar is completed,
- * binary is downloaded into `binPath`. Verify the binary and call it good.
+ * This function will first unzip using zlib, and then untar the content.
+ * Once untar is completed, the binary is downloaded into `opts.binPath`.
+ * It handles errors and successful completion using events.
+ * onSuccess is called upon successful completion.
  */
 function untar({ opts, req, onSuccess, onError }) {
+    return new Promise((resolve, reject) => {
+        const ungz = zlib.createGunzip();
 
-  const ungz = zlib.createGunzip();
-  const untar = tar.Extract({ path: opts.binPath });
+        ungz.on('error', error => {
+            if (onError) onError(error);
+            reject(error);
+        });
 
-  ungz.on('error', onError);
-  untar.on('error', onError);
-  untar.on('end', onSuccess);
+        const extractor = tar.extract({
+            cwd: opts.binPath,
+            onwarn: (code, message, data) => {
+                console.warn(code, message, data);
+            }
+        });
 
-  req.pipe(ungz).pipe(untar);
+        extractor.on('error', error => {
+            if (onError) onError(error);
+            reject(error);
+        });
+
+        extractor.on('finish', () => {
+            if (onSuccess) onSuccess();
+            resolve();
+        });
+
+        req.pipe(ungz).pipe(extractor);
+    });
 }
 
 module.exports = untar;
